@@ -11,10 +11,12 @@ package main
 import "fmt"
 
 func main() {
-	Data, err := FilesRead()
+	OriginalFileData, err := FilesRead()
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(Data)
+	// 剧情文本筛选
+	StorysData, err := StoryDataFiltering(OriginalFileData)
+	fmt.Println(StorysData)
 }
