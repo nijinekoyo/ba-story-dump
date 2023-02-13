@@ -18,5 +18,15 @@ func main() {
 
 	// 剧情文本筛选
 	StorysData, err := StoryDataFiltering(OriginalFileData)
-	fmt.Println(StorysData)
+	if err != nil {
+		panic(err)
+	}
+
+	// 写入剧情文本
+	err = WriteStorysData(StorysData)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Done")
 }
