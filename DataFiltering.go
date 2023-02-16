@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-17 02:12:55
+ * @LastEditTime: 2023-02-17 02:56:20
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -48,15 +48,34 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 		case "#video": // 视频
 		default: // 判断为剧情文本
 			if Data.TextJp != "" {
-				// 过滤选项文本
-				if Contains := strings.Contains(Data.TextJp, "[s]"); !Contains {
-					// 过滤双选项文本
-					if Contains := strings.Contains(Data.TextJp, "[ns]"); !Contains {
-						Text := FilterLabelData(Data.TextJp)       // 去除文本中的标签
-						Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
+				// 过滤文本中带特殊标签的文本
+				Label := []string{
+					"[s]",
+					"[s1]",
+					"[s2]",
+					"[s3]",
+					"[s4]",
+					"[s5]",
+					"[s6]",
+					"[s7]",
+					"[s8]",
+					"[s9]",
+					"[ns]",
+					"[ns1]",
+					"[ns2]",
+					"[ns3]",
+					"[ns4]",
+					"[ns5]",
+					"[ns6]",
+					"[ns7]",
+					"[ns8]",
+					"[ns9]",
+				} // 标签列表
+				if Find := CheckArray(FindLabel(Data.TextJp), Label); !Find {
+					Text := FilterLabelData(Data.TextJp)       // 去除文本中的标签
+					Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
 
-						OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
-					}
+					OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
 				}
 			}
 		}
@@ -75,4 +94,41 @@ func FilterLabelData(Content string) string {
 	Replaced := Regexp.ReplaceAllString(Content, "")
 
 	return Replaced
+}
+
+/**
+ * @description: 提取文本中的标签
+ * @param {string} Content
+ * @return {[]string} 标签列表
+ */
+func FindLabel(Content string) []string {
+	Regexp := regexp.MustCompile(`\[[^\]]*\]`)
+	Finds := Regexp.FindAllString(Content, -1)
+
+	return Finds
+}
+
+/**
+ * @description: 利用map判断源数组中是否存在目标数组的某个值
+ * @param {[]string} SourceArray 源数组
+ * @param {[]string} TargetArray 目标数组
+ * @return {bool} 是否存在
+ */
+func CheckArray(SourceArray []string, TargetArray []string) bool {
+	var Map map[string]struct{}
+	Map = make(map[string]struct{})
+
+	for _, Value := range SourceArray {
+		Map[Value] = struct{}{}
+	}
+
+	for _, Value := range TargetArray {
+		if _, ok := Map[Value]; ok {
+			return true
+		} else {
+			continue
+		}
+	}
+
+	return false
 }
