@@ -50,7 +50,10 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 			if Data.TextJp != "" {
 				// 过滤选项文本
 				if Contains := strings.Contains(Data.TextJp, "[s]"); !Contains {
-					OneStoryData.DialogueText = append(OneStoryData.DialogueText, FilterLabelData(Data.TextJp))
+					Text := FilterLabelData(Data.TextJp) // 去除文本中的标签
+					Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
+
+					OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
 				}
 			}
 		}
