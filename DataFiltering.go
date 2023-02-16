@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-17 02:56:20
+ * @LastEditTime: 2023-02-17 03:02:43
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -10,6 +10,7 @@ package main
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -27,18 +28,21 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 	var StorysData []StoryData
 
 	var OneStoryData StoryData
+	var TitleNum int = 1
 	for _, Data := range OriginalData.DataList {
 		ScriptData := strings.SplitN(Data.ScriptKr, ";", -1)
 		switch ScriptData[0] {
 		case "#title": // 剧情标题
 			// 判断OneStoryData是否存在标题，不存在则将标题存入OneStoryData，存在则表示上一话已完成，将OneStoryData存入StorysData
 			if OneStoryData.Title == "" {
-				OneStoryData.Title = FilterLabelData(Data.TextJp)
+				OneStoryData.Title = FilterLabelData(strconv.Itoa(TitleNum) + " " + Data.TextJp)
+				TitleNum++
 			} else {
 				StorysData = append(StorysData, OneStoryData)
 				// 清空OneStoryData
 				OneStoryData = StoryData{}
-				OneStoryData.Title = FilterLabelData(Data.TextJp)
+				OneStoryData.Title = FilterLabelData(strconv.Itoa(TitleNum) + " " + Data.TextJp)
+				TitleNum++
 			}
 		case "#hidemenu": // 隐藏菜单
 		case "#wait": // 等待
