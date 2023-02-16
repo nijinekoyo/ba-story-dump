@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-17 02:07:07
+ * @LastEditTime: 2023-02-17 02:12:55
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -50,10 +50,13 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 			if Data.TextJp != "" {
 				// 过滤选项文本
 				if Contains := strings.Contains(Data.TextJp, "[s]"); !Contains {
-					Text := FilterLabelData(Data.TextJp) // 去除文本中的标签
-					Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
+					// 过滤双选项文本
+					if Contains := strings.Contains(Data.TextJp, "[ns]"); !Contains {
+						Text := FilterLabelData(Data.TextJp)       // 去除文本中的标签
+						Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
 
-					OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
+						OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
+					}
 				}
 			}
 		}
