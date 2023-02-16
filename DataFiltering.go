@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-17 01:55:36
+ * @LastEditTime: 2023-02-17 02:07:07
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -48,7 +48,10 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 		case "#video": // 视频
 		default: // 判断为剧情文本
 			if Data.TextJp != "" {
-				OneStoryData.DialogueText = append(OneStoryData.DialogueText, FilterLabelData(Data.TextJp))
+				// 过滤选项文本
+				if Contains := strings.Contains(Data.TextJp, "[s]"); !Contains {
+					OneStoryData.DialogueText = append(OneStoryData.DialogueText, FilterLabelData(Data.TextJp))
+				}
 			}
 		}
 	}
