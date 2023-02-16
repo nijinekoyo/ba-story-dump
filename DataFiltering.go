@@ -45,6 +45,7 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 		case "#all": // 全部
 		case "#showmenu": // 显示菜单
 		case "#place": // 场景文本
+		case "#video": // 视频
 		default: // 判断为剧情文本
 			if Data.TextJp != "" {
 				OneStoryData.DialogueText = append(OneStoryData.DialogueText, FilterLabelData(Data.TextJp))
