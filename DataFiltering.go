@@ -119,8 +119,7 @@ func FindLabel(Content string) []string {
  * @return {bool} 是否存在
  */
 func CheckArray(SourceArray []string, TargetArray []string) bool {
-	var Map map[string]struct{}
-	Map = make(map[string]struct{})
+	Map := make(map[string]struct{})
 
 	for _, Value := range SourceArray {
 		Map[Value] = struct{}{}
