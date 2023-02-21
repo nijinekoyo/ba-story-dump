@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-17 03:02:43
+ * @LastEditTime: 2023-02-21 21:26:07
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -52,33 +52,45 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 		case "#video": // 视频
 		default: // 判断为剧情文本
 			if Data.TextJp != "" {
-				// 过滤文本中带特殊标签的文本
-				Label := []string{
-					"[s]",
-					"[s1]",
-					"[s2]",
-					"[s3]",
-					"[s4]",
-					"[s5]",
-					"[s6]",
-					"[s7]",
-					"[s8]",
-					"[s9]",
-					"[ns]",
-					"[ns1]",
-					"[ns2]",
-					"[ns3]",
-					"[ns4]",
-					"[ns5]",
-					"[ns6]",
-					"[ns7]",
-					"[ns8]",
-					"[ns9]",
-				} // 标签列表
-				if Find := CheckArray(FindLabel(Data.TextJp), Label); !Find {
-					Text := FilterLabelData(Data.TextJp)       // 去除文本中的标签
-					Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
+				// 清理文本
+				CleanString := func(Text string) string {
+					CleanText := FilterLabelData(Text)                   // 去除文本中的标签
+					CleanText = strings.Replace(CleanText, "#n", "", -1) // 去除换行符
 
+					return CleanText
+				}
+
+				// 判断是否启用过滤器
+				if Flags.Filter {
+					// 过滤文本中带特殊标签的文本
+					Label := []string{
+						"[s]",
+						"[s1]",
+						"[s2]",
+						"[s3]",
+						"[s4]",
+						"[s5]",
+						"[s6]",
+						"[s7]",
+						"[s8]",
+						"[s9]",
+						"[ns]",
+						"[ns1]",
+						"[ns2]",
+						"[ns3]",
+						"[ns4]",
+						"[ns5]",
+						"[ns6]",
+						"[ns7]",
+						"[ns8]",
+						"[ns9]",
+					} // 标签列表
+					if Find := CheckArray(FindLabel(Data.TextJp), Label); !Find {
+						Text := CleanString(Data.TextJp)
+						OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
+					}
+				} else {
+					Text := CleanString(Data.TextJp)
 					OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
 				}
 			}

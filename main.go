@@ -11,6 +11,13 @@ package main
 import "fmt"
 
 func main() {
+	// 初始化参数
+	err := InitFlag()
+	if err != nil {
+		panic(err)
+	}
+
+	// 读取文件
 	OriginalFileData, err := FilesRead()
 	if err != nil {
 		panic(err)
