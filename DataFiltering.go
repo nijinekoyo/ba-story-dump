@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-21 21:26:07
+ * @LastEditTime: 2023-02-22 19:03:43
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -54,10 +54,17 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 			if Data.TextJp != "" {
 				// 清理文本
 				CleanString := func(Text string) string {
-					CleanText := FilterLabelData(Text)                   // 去除文本中的标签
-					CleanText = strings.Replace(CleanText, "#n", "", -1) // 去除换行符
+					if len(FindRubyLabel(Text)) != 0 {
+						// 替换文本的ruby标签
+						for _, RubyLabel := range FindRubyLabel(Text) {
+							Text = strings.Replace(Text, RubyLabel, "（"+FindLabelParameter(RubyLabel)+"）", -1)
+						}
+					}
 
-					return CleanText
+					Text = FilterLabelData(Text)                   // 去除文本中的标签
+					Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
+
+					return Text
 				}
 
 				// 判断是否启用过滤器
@@ -122,6 +129,30 @@ func FindLabel(Content string) []string {
 	Finds := Regexp.FindAllString(Content, -1)
 
 	return Finds
+}
+
+/**
+ * @description: 提取文本中的Ruby标签
+ * @param {string} Content
+ * @return {[]string} 标签列表
+ */
+func FindRubyLabel(Content string) []string {
+	Regexp := regexp.MustCompile(`\[ruby=[^\]]*\]`)
+	Finds := Regexp.FindAllString(Content, -1)
+
+	return Finds
+}
+
+/**
+ * @description: 提取提取标签参数
+ * @param {string} Content 文本内容
+ * @return {string} 标签参数
+ */
+func FindLabelParameter(Content string) string {
+	ContentSplit := strings.SplitN(Content, "=", -1)
+	Parameter := strings.Replace(ContentSplit[1], "]", "", -1)
+
+	return Parameter
 }
 
 /**
