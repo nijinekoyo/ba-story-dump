@@ -23,8 +23,8 @@ var Flags Flag // 全局参数变量
  */
 func InitFlag() error {
 	// 参数解析
-	Filter := flag.Bool("filter", true, "启用过滤器")
-	FilterRuby := flag.Bool("filter_ruby", true, "启用Ruby过滤器")
+	Filter := flag.Bool("filter", false, "启用过滤器")
+	FilterRuby := flag.Bool("filter_ruby", false, "启用Ruby过滤器")
 	flag.Parse()
 
 	// 参数写入变量
