@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-22 19:03:43
+ * @LastEditTime: 2023-02-23 03:07:04
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -54,7 +54,7 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 			if Data.TextJp != "" {
 				// 清理文本
 				CleanString := func(Text string) string {
-					if !Flags.FilterRuby {
+					if Flags.FilterRuby {
 						if len(FindRubyLabel(Text)) != 0 {
 							// 替换文本的ruby标签
 							for _, RubyLabel := range FindRubyLabel(Text) {
