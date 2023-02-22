@@ -54,14 +54,16 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 			if Data.TextJp != "" {
 				// 清理文本
 				CleanString := func(Text string) string {
-					if len(FindRubyLabel(Text)) != 0 {
-						// 替换文本的ruby标签
-						for _, RubyLabel := range FindRubyLabel(Text) {
-							Text = strings.Replace(Text, RubyLabel, "（"+FindLabelParameter(RubyLabel)+"）", -1)
+					if !Flags.FilterRuby {
+						if len(FindRubyLabel(Text)) != 0 {
+							// 替换文本的ruby标签
+							for _, RubyLabel := range FindRubyLabel(Text) {
+								Text = strings.Replace(Text, RubyLabel, "（"+FindLabelParameter(RubyLabel)+"）", -1)
+							}
 						}
 					}
 
-					Text = FilterLabelData(Text)                   // 去除文本中的标签
+					Text = FilterLabelData(Text)               // 去除文本中的标签
 					Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
 
 					return Text

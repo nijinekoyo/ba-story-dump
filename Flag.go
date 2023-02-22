@@ -11,7 +11,8 @@ package main
 import "flag"
 
 type Flag struct {
-	Filter bool // 启用过滤器
+	Filter     bool // 启用过滤器
+	FilterRuby bool // 启用Ruby过滤器（开启后Ruby语句以括号的方式写入文本）
 }
 
 var Flags Flag // 全局参数变量
@@ -23,10 +24,12 @@ var Flags Flag // 全局参数变量
 func InitFlag() error {
 	// 参数解析
 	Filter := flag.Bool("filter", true, "启用过滤器")
+	FilterRuby := flag.Bool("filter_ruby", true, "启用Ruby过滤器")
 	flag.Parse()
 
 	// 参数写入变量
 	Flags.Filter = *Filter
+	Flags.FilterRuby = *FilterRuby
 
 	return nil
 }
