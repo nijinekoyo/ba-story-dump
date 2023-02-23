@@ -23,6 +23,12 @@ func main() {
 		panic(err)
 	}
 
+	// 初始化角色名字本地化
+	err = InitCharacterNameLocalization()
+	if err != nil {
+		panic(err)
+	}
+
 	// 剧情文本筛选
 	StorysData, err := StoryDataFiltering(OriginalFileData)
 	if err != nil {

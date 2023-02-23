@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-23 03:07:04
+ * @LastEditTime: 2023-02-23 21:26:14
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -69,6 +69,47 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 					return Text
 				}
 
+				var Text string
+
+				if Flags.AddCharacterName {
+					// 获取角色名字
+					if len(ScriptData) > 1 {
+						NameKR := ScriptData[1]
+						// 获取日语名字
+						NameSplit := strings.SplitN(NameKR, " ", -1)
+						NameJP, NicknameJP := CharacterNameKRToJP(NameSplit[0])
+						Text += NameJP
+						// 判断脚本内是否存在所属
+						if len(NameSplit) > 1 {
+							// 如果存在所属，则检查是否存在本地化的所属
+							if NicknameJP != "" {
+								// 存在则使用本地化所属
+								Text += "（" + NicknameJP + "）："
+							} else {
+								// 不存在则使用原文所属
+								var Nickname string
+								for Index, Value := range NameSplit {
+									if Index == len(NameSplit)-1 {
+										Nickname += Value
+										continue
+									}
+
+									if Index != 0 {
+										Nickname += Value + " "
+										continue
+									}
+								}
+								Text += "（" + Nickname + "）："
+							}
+						} else {
+							// 如果不存在所属，则使用本地化的所属
+							if NicknameJP != "" {
+								Text += "（" + NicknameJP + "）："
+							}
+						}
+					}
+				}
+
 				// 判断是否启用过滤器
 				if Flags.Filter {
 					// 过滤文本中带特殊标签的文本
@@ -95,11 +136,11 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 						"[ns9]",
 					} // 标签列表
 					if Find := CheckArray(FindLabel(Data.TextJp), Label); !Find {
-						Text := CleanString(Data.TextJp)
+						Text += CleanString(Data.TextJp)
 						OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
 					}
 				} else {
-					Text := CleanString(Data.TextJp)
+					Text += CleanString(Data.TextJp)
 					OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
 				}
 			}
