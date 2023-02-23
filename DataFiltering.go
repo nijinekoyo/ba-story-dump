@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-23 21:26:14
+ * @LastEditTime: 2023-02-24 02:09:56
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -72,40 +72,48 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 				var Text string
 
 				if Flags.AddCharacterName {
-					// 获取角色名字
-					if len(ScriptData) > 1 {
-						NameKR := ScriptData[1]
-						// 获取日语名字
-						NameSplit := strings.SplitN(NameKR, " ", -1)
-						NameJP, NicknameJP := CharacterNameKRToJP(NameSplit[0])
-						Text += NameJP
-						// 判断脚本内是否存在所属
-						if len(NameSplit) > 1 {
-							// 如果存在所属，则检查是否存在本地化的所属
-							if NicknameJP != "" {
-								// 存在则使用本地化所属
-								Text += "（" + NicknameJP + "）："
-							} else {
-								// 不存在则使用原文所属
-								var Nickname string
-								for Index, Value := range NameSplit {
-									if Index == len(NameSplit)-1 {
-										Nickname += Value
-										continue
-									}
+					// 匹配获取角色名字，反转数组获取说话人
+					for _, Value := range InversionArray(ScriptData) {
+						// 如果匹配到#则表示是对话文本，忽略
+						if find := strings.Contains(Value, "#"); find {
+							continue
+						}
+						ScriptDataSplit := strings.SplitN(Value, " ", -1)
+						if _, ok := CharacterName[ScriptDataSplit[0]]; ok {
+							// 获取日语名字
+							NameJP, NicknameJP := CharacterNameKRToJP(ScriptDataSplit[0])
+							Text += NameJP
+							// 判断脚本内是否存在所属
+							if len(ScriptDataSplit) > 1 {
+								// 如果存在所属，则检查是否存在本地化的所属
+								if NicknameJP != "" {
+									// 存在则使用本地化所属
+									Text += "（" + NicknameJP + "）："
+								} else {
+									// 不存在则使用原文所属
+									var Nickname string
+									for Index, Value := range ScriptDataSplit {
+										if Index == len(ScriptDataSplit)-1 {
+											Nickname += Value
+											continue
+										}
 
-									if Index != 0 {
-										Nickname += Value + " "
-										continue
+										if Index != 0 {
+											Nickname += Value + " "
+											continue
+										}
 									}
+									Text += "（" + Nickname + "）："
 								}
-								Text += "（" + Nickname + "）："
+							} else {
+								// 如果不存在所属，则使用本地化的所属
+								if NicknameJP != "" {
+									Text += "（" + NicknameJP + "）："
+								}
 							}
-						} else {
-							// 如果不存在所属，则使用本地化的所属
-							if NicknameJP != "" {
-								Text += "（" + NicknameJP + "）："
-							}
+
+							// 匹配到角色名字后跳出循环
+							break
 						}
 					}
 				}
@@ -220,4 +228,18 @@ func CheckArray(SourceArray []string, TargetArray []string) bool {
 	}
 
 	return false
+}
+
+/**
+ * @description: 反转数组
+ * @return {*}
+ */
+func InversionArray(Array []string) []string {
+	var InversionArray []string
+
+	for Index := len(Array) - 1; Index >= 0; Index-- {
+		InversionArray = append(InversionArray, Array[Index])
+	}
+
+	return InversionArray
 }
