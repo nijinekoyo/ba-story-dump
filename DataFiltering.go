@@ -79,6 +79,7 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 							continue
 						}
 						ScriptDataSplit := strings.SplitN(Value, " ", -1)
+
 						if _, ok := CharacterName[ScriptDataSplit[0]]; ok {
 							// 获取日语名字
 							NameJP, NicknameJP := CharacterNameKRToJP(ScriptDataSplit[0])
@@ -109,6 +110,8 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 								// 如果不存在所属，则使用本地化的所属
 								if NicknameJP != "" {
 									Text += "（" + NicknameJP + "）："
+								} else {
+									Text += "："
 								}
 							}
 
