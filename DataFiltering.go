@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-02-24 02:09:56
+ * @LastEditTime: 2023-03-09 01:15:26
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -46,7 +46,6 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 			}
 		case "#hidemenu": // 隐藏菜单
 		case "#wait": // 等待
-		case "#all": // 全部
 		case "#showmenu": // 显示菜单
 		case "#place": // 场景文本
 		case "#video": // 视频
