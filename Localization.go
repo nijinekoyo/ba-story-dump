@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-23 20:43:13
- * @LastEditTime: 2023-02-23 20:56:17
+ * @LastEditTime: 2023-03-09 13:42:58
  * @LastEditors: nijineko
  * @Description: 本地化部分
  * @FilePath: \StoryDump\Localization.go
@@ -69,6 +69,14 @@ func InitCharacterNameLocalization() error {
 			// 如果存在则判断所属是否为空
 			if CharacterName[CharacterNameExcelData.NameKR].NicknameJP == "" {
 				// 如果为空则覆盖
+				CharacterName[CharacterNameExcelData.NameKR] = CharacterNameLocalization{
+					NameJP:     CharacterNameExcelData.NameJP,
+					NicknameJP: CharacterNameExcelData.NicknameJP,
+				}
+			}
+			// 判断所属是否为???
+			if CharacterName[CharacterNameExcelData.NameKR].NicknameJP == "???" {
+				// 如果为???则覆盖
 				CharacterName[CharacterNameExcelData.NameKR] = CharacterNameLocalization{
 					NameJP:     CharacterNameExcelData.NameJP,
 					NicknameJP: CharacterNameExcelData.NicknameJP,
