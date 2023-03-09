@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-09 13:29:32
+ * @LastEditTime: 2023-03-09 13:40:05
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -78,6 +78,9 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 							continue
 						}
 						ScriptDataSplit := strings.SplitN(Value, " ", -1)
+
+						// 去除人名中的中的“통신”(通信)
+						ScriptDataSplit[0] = strings.Replace(ScriptDataSplit[0], "통신", "", -1)
 
 						if _, ok := CharacterName[ScriptDataSplit[0]]; ok {
 							// 获取日语名字
