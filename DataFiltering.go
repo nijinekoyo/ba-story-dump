@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-09 01:15:26
+ * @LastEditTime: 2023-03-09 13:29:32
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -53,7 +53,7 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 			if Data.TextJp != "" {
 				// 清理文本
 				CleanString := func(Text string) string {
-					if Flags.FilterRuby {
+					if Flags.AddRuby {
 						if len(FindRubyLabel(Text)) != 0 {
 							// 替换文本的ruby标签
 							for _, RubyLabel := range FindRubyLabel(Text) {
@@ -120,8 +120,8 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 					}
 				}
 
-				// 判断是否启用过滤器
-				if Flags.Filter {
+				// 判断是否启用Tag过滤器
+				if Flags.FilterTag {
 					// 过滤文本中带特殊标签的文本
 					Label := []string{
 						"[s]",
