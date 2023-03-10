@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-09 13:40:05
+ * @LastEditTime: 2023-03-10 10:26:09
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -9,6 +9,7 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -123,6 +124,28 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 					}
 				}
 
+				// 样式提示
+				var StyleTips string
+
+				// 判断是否启用字体大小提示
+				if Flags.AddFontSizeTips {
+					for Index, Value := range ScriptData {
+						// 判断是否存在字体大小标签
+						if Find := strings.Contains(Value, "#fontsize"); Find {
+							// 如果存在，则提取下一个元素为字体大小
+							FontSize := ScriptData[Index+1]
+
+							// 写入样式提示
+							StyleTips += fmt.Sprintf("FontSize:%s,", FontSize)
+						}
+					}
+				}
+
+				// 清理样式提示的最后一个逗号
+				if StyleTips != "" {
+					StyleTips = strings.TrimRight(StyleTips, ",")
+				}
+
 				// 判断是否启用Tag过滤器
 				if Flags.FilterTag {
 					// 过滤文本中带特殊标签的文本
@@ -149,11 +172,21 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 						"[ns9]",
 					} // 标签列表
 					if Find := CheckArray(FindLabel(Data.TextJp), Label); !Find {
+						// 清理文本
 						Text += CleanString(Data.TextJp)
+						// 追加样式提示
+						if StyleTips != "" {
+							Text += " (" + StyleTips + ")"
+						}
 						OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
 					}
 				} else {
+					// 清理文本
 					Text += CleanString(Data.TextJp)
+					// 追加样式提示
+					if StyleTips != "" {
+						Text += " (" + StyleTips + ")"
+					}
 					OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
 				}
 			}
