@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-18 15:41:57
+ * @LastEditTime: 2023-03-18 16:52:08
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -11,7 +11,6 @@ package main
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -25,25 +24,21 @@ type StoryData struct {
  * @param {OriginalFile} OriginalFile
  * @return {*}
  */
-func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
-	var StorysData []StoryData
+func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
+	StorysDatas := make(map[int]StoryData)
 
-	var OneStoryData StoryData
-	var TitleNum int = 1
 	for _, Data := range OriginalData.DataList {
-		ScriptData := strings.SplitN(Data.ScriptKr, ";", -1)
+		ScriptData := strings.SplitN(Data.ScriptKr, "\n", 2)
+		if len(ScriptData) == 2 {
+			ScriptData = strings.SplitN(ScriptData[1], ";", -1)
+		} else {
+			ScriptData = strings.SplitN(Data.ScriptKr, ";", -1)
+		}
 		switch ScriptData[0] {
 		case "#title": // 剧情标题
-			// 判断OneStoryData是否存在标题，不存在则将标题存入OneStoryData，存在则表示上一话已完成，将OneStoryData存入StorysData
-			if OneStoryData.Title == "" {
-				OneStoryData.Title = FilterLabelData(strconv.Itoa(TitleNum) + " " + Data.TextJp)
-				TitleNum++
-			} else {
-				StorysData = append(StorysData, OneStoryData)
-				// 清空OneStoryData
-				OneStoryData = StoryData{}
-				OneStoryData.Title = FilterLabelData(strconv.Itoa(TitleNum) + " " + Data.TextJp)
-				TitleNum++
+			// 将NowGroupID与标题文本写入对应GroupId的Title中
+			StorysDatas[Data.GroupId] = StoryData{
+				Title: FilterLabelData(Data.TextJp),
 			}
 		case "#hidemenu": // 隐藏菜单
 		case "#wait": // 等待
@@ -147,7 +142,21 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 						if StyleTips != "" {
 							Text += " (" + StyleTips + ")"
 						}
-						OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
+
+						// 将GroupId的最后一位数修正为0后判断是否存在
+						if _, Find := StorysDatas[Data.GroupId-(Data.GroupId%10)]; Find {
+							// 如果存在，则将文本追加到GroupId的最后一位数修正为0的对话文本中
+							StorysDatas[Data.GroupId-(Data.GroupId%10)] = StoryData{
+								Title:        StorysDatas[Data.GroupId-(Data.GroupId%10)].Title,
+								DialogueText: append(StorysDatas[Data.GroupId-(Data.GroupId%10)].DialogueText, Text),
+							}
+						} else {
+							// 如果不存在，则将文本追加到GroupId的对话文本中
+							StorysDatas[Data.GroupId] = StoryData{
+								Title:        StorysDatas[Data.GroupId].Title,
+								DialogueText: append(StorysDatas[Data.GroupId].DialogueText, Text),
+							}
+						}
 					}
 				} else {
 					// 清理文本
@@ -156,13 +165,27 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 					if StyleTips != "" {
 						Text += " (" + StyleTips + ")"
 					}
-					OneStoryData.DialogueText = append(OneStoryData.DialogueText, Text)
+
+					// 将GroupId的最后一位数修正为0后判断是否存在
+					if _, Find := StorysDatas[Data.GroupId-(Data.GroupId%10)]; Find {
+						// 如果存在，则将文本追加到GroupId的最后一位数修正为0的对话文本中
+						StorysDatas[Data.GroupId-(Data.GroupId%10)] = StoryData{
+							Title:        StorysDatas[Data.GroupId-(Data.GroupId%10)].Title,
+							DialogueText: append(StorysDatas[Data.GroupId-(Data.GroupId%10)].DialogueText, Text),
+						}
+					} else {
+						// 如果不存在，则将文本追加到GroupId的对话文本中
+						StorysDatas[Data.GroupId] = StoryData{
+							Title:        StorysDatas[Data.GroupId].Title,
+							DialogueText: append(StorysDatas[Data.GroupId].DialogueText, Text),
+						}
+					}
 				}
 			}
 		}
 	}
 
-	return StorysData, nil
+	return StorysDatas, nil
 }
 
 /**
