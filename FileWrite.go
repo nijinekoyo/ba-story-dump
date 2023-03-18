@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -31,6 +32,9 @@ func WriteStorysData(Datas map[int]StoryData) error {
 		for _, DialogueText := range Data.DialogueText {
 			Content += DialogueText + "\r"
 		}
+
+		// 去除标题中不能存在的符号
+		Data.Title = strings.Replace(Data.Title, "/", "", -1)
 
 		err := os.WriteFile(path.Join(StorysPath, strconv.Itoa(Index)+" "+Data.Title+".txt"), []byte(Content), 0666)
 		if err != nil {

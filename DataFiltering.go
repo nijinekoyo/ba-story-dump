@@ -40,6 +40,11 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 			StorysDatas[Data.GroupId] = StoryData{
 				Title: FilterLabelData(Data.TextJp),
 			}
+		case "#Title": // 大写的也是剧情标题
+			// 将NowGroupID与标题文本写入对应GroupId的Title中
+			StorysDatas[Data.GroupId] = StoryData{
+				Title: FilterLabelData(Data.TextJp),
+			}
 		case "#hidemenu": // 隐藏菜单
 		case "#wait": // 等待
 		case "#showmenu": // 显示菜单
