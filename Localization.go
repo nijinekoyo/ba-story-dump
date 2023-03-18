@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-23 20:43:13
- * @LastEditTime: 2023-03-09 13:42:58
+ * @LastEditTime: 2023-03-18 15:44:35
  * @LastEditors: nijineko
  * @Description: 本地化部分
  * @FilePath: \StoryDump\Localization.go
@@ -12,36 +12,35 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+
+	"github.com/pierrec/xxHash/xxHash32"
 )
 
 type CharacterNameExcel struct {
-	DataList []struct {
-		CharacterName   int64  `json:"CharacterName"`
-		NameJP          string `json:"NameJP"`     // 日文名字
-		NameKR          string `json:"NameKR"`     // 韩文名字
-		NicknameJP      string `json:"NicknameJP"` // 日文所属
-		NicknameKR      string `json:"NicknameKR"` // 韩文所属
-		ProductionStep  int    `json:"ProductionStep"`
-		Shape           int    `json:"Shape"`
-		SmallPortrait   string `json:"SmallPortrait"`   // 小头像
-		SpinePrefabName string `json:"SpinePrefabName"` // Spine动画
-	} `json:"DataList"`
+	DataList []CharacterInfo `json:"DataList"`
 }
 
-type CharacterNameLocalization struct {
-	NameJP     string // 日文名字
-	NicknameJP string // 日文所属
+type CharacterInfo struct {
+	CharacterName   uint32 `json:"CharacterName"`
+	NameJP          string `json:"NameJP"`     // 日文名字
+	NameKR          string `json:"NameKR"`     // 韩文名字
+	NicknameJP      string `json:"NicknameJP"` // 日文所属
+	NicknameKR      string `json:"NicknameKR"` // 韩文所属
+	ProductionStep  int    `json:"ProductionStep"`
+	Shape           int    `json:"Shape"`
+	SmallPortrait   string `json:"SmallPortrait"`   // 小头像
+	SpinePrefabName string `json:"SpinePrefabName"` // Spine动画
 }
 
-var CharacterName map[string]CharacterNameLocalization // 角色名字，Key为韩文
+var CharacterInfos map[uint32]CharacterInfo // 角色名字，Key为角色xxhash
 
 var CharacterNameLocalizationJsonPath = "./localization/ScenarioCharacterNameExcelTable.json" // 角色名字本地化文件路径
 
 /**
- * @description: 初始化角色名字本地化
+ * @description: 初始化角色信息本地化
  * @return {error} 错误
  */
-func InitCharacterNameLocalization() error {
+func InitCharacterInfoLocalization() error {
 	// 读取文件
 	File, err := os.OpenFile(CharacterNameLocalizationJsonPath, os.O_RDONLY, 0666)
 	if err != nil {
@@ -61,34 +60,10 @@ func InitCharacterNameLocalization() error {
 	}
 
 	// 生成本地化数据
-	CharacterName = make(map[string]CharacterNameLocalization)
+	CharacterInfos = make(map[uint32]CharacterInfo)
 
 	for _, CharacterNameExcelData := range CharacterNameExcel.DataList {
-		// 判断是否存在重复的Key
-		if _, ok := CharacterName[CharacterNameExcelData.NameKR]; ok {
-			// 如果存在则判断所属是否为空
-			if CharacterName[CharacterNameExcelData.NameKR].NicknameJP == "" {
-				// 如果为空则覆盖
-				CharacterName[CharacterNameExcelData.NameKR] = CharacterNameLocalization{
-					NameJP:     CharacterNameExcelData.NameJP,
-					NicknameJP: CharacterNameExcelData.NicknameJP,
-				}
-			}
-			// 判断所属是否为???
-			if CharacterName[CharacterNameExcelData.NameKR].NicknameJP == "???" {
-				// 如果为???则覆盖
-				CharacterName[CharacterNameExcelData.NameKR] = CharacterNameLocalization{
-					NameJP:     CharacterNameExcelData.NameJP,
-					NicknameJP: CharacterNameExcelData.NicknameJP,
-				}
-			}
-		} else {
-			// 如果不存在则直接写入
-			CharacterName[CharacterNameExcelData.NameKR] = CharacterNameLocalization{
-				NameJP:     CharacterNameExcelData.NameJP,
-				NicknameJP: CharacterNameExcelData.NicknameJP,
-			}
-		}
+		CharacterInfos[CharacterNameExcelData.CharacterName] = CharacterNameExcelData
 	}
 
 	return err
@@ -101,10 +76,12 @@ func InitCharacterNameLocalization() error {
  * @return {string} 日文角色所属
  */
 func CharacterNameKRToJP(NameKR string) (string, string) {
-	// 判断是否存在
-	if CharacterNameLocalization, ok := CharacterName[NameKR]; ok {
-		return CharacterNameLocalization.NameJP, CharacterNameLocalization.NicknameJP
-	} else {
+	CharacterName := xxHash32.Checksum([]byte(NameKR), 0)
+
+	CharacterInfos, ok := CharacterInfos[CharacterName]
+	if !ok {
 		return "", ""
 	}
+
+	return CharacterInfos.NameJP, CharacterInfos.NicknameJP
 }

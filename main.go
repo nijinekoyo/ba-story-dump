@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:15:07
- * @LastEditTime: 2023-02-13 20:18:13
+ * @LastEditTime: 2023-03-18 15:24:18
  * @LastEditors: nijineko
  * @Description: main file
  * @FilePath: \StoryDump\main.go
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	// 初始化角色名字本地化
-	err = InitCharacterNameLocalization()
+	err = InitCharacterInfoLocalization()
 	if err != nil {
 		panic(err)
 	}

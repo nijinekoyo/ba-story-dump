@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-10 10:26:09
+ * @LastEditTime: 2023-03-18 15:41:57
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -75,50 +75,19 @@ func StoryDataFiltering(OriginalData OriginalFile) ([]StoryData, error) {
 					// 匹配获取角色名字，反转数组获取说话人
 					for _, Value := range InversionArray(ScriptData) {
 						// 如果匹配到#则表示是对话文本，忽略
-						if find := strings.Contains(Value, "#"); find {
+						if Find := strings.Contains(Value, "#"); Find {
 							continue
 						}
-						ScriptDataSplit := strings.SplitN(Value, " ", -1)
 
-						// 去除人名中的中的“통신”(通信)
-						ScriptDataSplit[0] = strings.Replace(ScriptDataSplit[0], "통신", "", -1)
-
-						if _, ok := CharacterName[ScriptDataSplit[0]]; ok {
-							// 获取日语名字
-							NameJP, NicknameJP := CharacterNameKRToJP(ScriptDataSplit[0])
-							Text += NameJP
-							// 判断脚本内是否存在所属
-							if len(ScriptDataSplit) > 1 {
-								// 如果存在所属，则检查是否存在本地化的所属
-								if NicknameJP != "" {
-									// 存在则使用本地化所属
-									Text += "（" + NicknameJP + "）："
-								} else {
-									// 不存在则使用原文所属
-									var Nickname string
-									for Index, Value := range ScriptDataSplit {
-										if Index == len(ScriptDataSplit)-1 {
-											Nickname += Value
-											continue
-										}
-
-										if Index != 0 {
-											Nickname += Value + " "
-											continue
-										}
-									}
-									Text += "（" + Nickname + "）："
-								}
-							} else {
-								// 如果不存在所属，则使用本地化的所属
-								if NicknameJP != "" {
-									Text += "（" + NicknameJP + "）："
-								} else {
-									Text += "："
-								}
+						// 尝试匹配角色名字
+						NameJP, NicknameJP := CharacterNameKRToJP(Value)
+						if NameJP != "" {
+							// 如果匹配到角色名字，则将角色名字添加到文本前面
+							if NicknameJP == "" {
+								Text = fmt.Sprintf("%s：", NameJP)
+								break
 							}
-
-							// 匹配到角色名字后跳出循环
+							Text = fmt.Sprintf("%s（%s）：", NameJP, NicknameJP)
 							break
 						}
 					}
