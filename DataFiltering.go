@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-18 16:52:08
+ * @LastEditTime: 2023-03-26 20:17:53
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -65,6 +65,21 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 
 					Text = FilterLabelData(Text)               // 去除文本中的标签
 					Text = strings.Replace(Text, "#n", "", -1) // 去除换行符
+
+					// 按照换行符分割,去除开头的空格
+					TextArray := strings.Split(Text, "\n")
+					if len(TextArray) != 0 {
+						var TextTrimSpace string
+						for Index, Value := range TextArray {
+							TextTrimSpace += strings.TrimLeft(Value, " ")
+							if Index != len(TextArray)-1 {
+								TextTrimSpace += "\n"
+							}
+						}
+						Text = TextTrimSpace
+					} else {
+						Text = strings.TrimLeft(Text, " ")
+					}
 
 					return Text
 				}
