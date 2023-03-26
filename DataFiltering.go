@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-26 20:17:53
+ * @LastEditTime: 2023-03-26 20:38:55
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -134,28 +134,10 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 				if Flags.FilterTag {
 					// 过滤文本中带特殊标签的文本
 					Label := []string{
-						"[s]",
-						"[s1]",
-						"[s2]",
-						"[s3]",
-						"[s4]",
-						"[s5]",
-						"[s6]",
-						"[s7]",
-						"[s8]",
-						"[s9]",
-						"[ns]",
-						"[ns1]",
-						"[ns2]",
-						"[ns3]",
-						"[ns4]",
-						"[ns5]",
-						"[ns6]",
-						"[ns7]",
-						"[ns8]",
-						"[ns9]",
+						`s`,
+						`ns`,
 					} // 标签列表
-					if Find := CheckArray(FindLabel(Data.TextJp), Label); !Find {
+					if Find := CheckLabel(Data.TextJp, Label); !Find {
 						// 清理文本
 						Text += CleanString(Data.TextJp)
 						// 追加样式提示
@@ -254,6 +236,25 @@ func FindLabelParameter(Content string) string {
 	Parameter := strings.Replace(ContentSplit[1], "]", "", -1)
 
 	return Parameter
+}
+
+/**
+ * @description: 检查文本中是否存在某个标签
+ * @param {string} Content 文本内容
+ * @param {[]string} Label 标签列表（不带[]）
+ * @return {bool} 是否存在
+ */
+func CheckLabel(Content string, Label []string) bool {
+	for _, Value := range Label {
+		Regexp := regexp.MustCompile(`\[` + Value + `[^\]]*\]`)
+		Find := Regexp.FindString(Content)
+
+		if Find != "" {
+			return true
+		}
+	}
+
+	return false
 }
 
 /**
