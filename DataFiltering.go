@@ -113,6 +113,8 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 						if Find := strings.Contains(Value, "#fontsize"); Find {
 							// 如果存在，则提取下一个元素为字体大小
 							FontSize := ScriptData[Index+1]
+							// 分割换行符，去除换行符后的内容
+							FontSize = strings.Split(FontSize, "\n")[0]
 
 							// 写入样式提示
 							StyleTips += fmt.Sprintf("FontSize:%s,", FontSize)
