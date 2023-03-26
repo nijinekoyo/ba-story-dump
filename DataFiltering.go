@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-26 20:38:55
+ * @LastEditTime: 2023-03-26 21:05:59
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -28,12 +28,7 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 	StorysDatas := make(map[int]StoryData)
 
 	for _, Data := range OriginalData.DataList {
-		ScriptData := strings.SplitN(Data.ScriptKr, "\n", 2)
-		if len(ScriptData) == 2 {
-			ScriptData = strings.SplitN(ScriptData[1], ";", -1)
-		} else {
-			ScriptData = strings.SplitN(Data.ScriptKr, ";", -1)
-		}
+		ScriptData := strings.SplitN(Data.ScriptKr, ";", -1)
 		switch ScriptData[0] {
 		case "#title": // 剧情标题
 			// 将NowGroupID与标题文本写入对应GroupId的Title中
