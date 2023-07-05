@@ -165,15 +165,22 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 						Text += " (" + StyleTips + ")"
 					}
 
-					// 将GroupId的最后一位数修正为0后判断是否存在
-					if _, Find := StorysDatas[Data.GroupId-(Data.GroupId%10)]; Find {
-						// 如果存在，则将文本追加到GroupId的最后一位数修正为0的对话文本中
-						StorysDatas[Data.GroupId-(Data.GroupId%10)] = StoryData{
-							Title:        StorysDatas[Data.GroupId-(Data.GroupId%10)].Title,
-							DialogueText: append(StorysDatas[Data.GroupId-(Data.GroupId%10)].DialogueText, Text),
+					if Data.GroupId > 999 {
+						// 将GroupId的最后一位数修正为0后判断是否存在
+						if _, Find := StorysDatas[Data.GroupId-(Data.GroupId%10)]; Find {
+							// 如果存在，则将文本追加到GroupId的最后一位数修正为0的对话文本中
+							StorysDatas[Data.GroupId-(Data.GroupId%10)] = StoryData{
+								Title:        StorysDatas[Data.GroupId-(Data.GroupId%10)].Title,
+								DialogueText: append(StorysDatas[Data.GroupId-(Data.GroupId%10)].DialogueText, Text),
+							}
+						} else {
+							// 如果不存在，则将文本追加到GroupId的对话文本中
+							StorysDatas[Data.GroupId] = StoryData{
+								Title:        StorysDatas[Data.GroupId].Title,
+								DialogueText: append(StorysDatas[Data.GroupId].DialogueText, Text),
+							}
 						}
 					} else {
-						// 如果不存在，则将文本追加到GroupId的对话文本中
 						StorysDatas[Data.GroupId] = StoryData{
 							Title:        StorysDatas[Data.GroupId].Title,
 							DialogueText: append(StorysDatas[Data.GroupId].DialogueText, Text),
