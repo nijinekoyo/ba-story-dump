@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-03-26 21:05:59
+ * @LastEditTime: 2023-09-09 16:33:49
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -54,6 +54,26 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 							// 替换文本的ruby标签
 							for _, RubyLabel := range FindRubyLabel(Text) {
 								Text = strings.Replace(Text, RubyLabel, "（"+FindLabelParameter(RubyLabel)+"）", -1)
+							}
+						}
+					}
+
+					if Flags.AddSpineIntervalStyle {
+						// 判断文本是否为回忆大厅的文本
+						if ScriptData[0] == "#st" {
+							// 去除文本内的`― `
+							Text = strings.Replace(Text, `― `, "", -1)
+
+							if len(FindWaLabel(Text)) != 0 {
+								// 替换文本的wa标签
+								for _, WaLabel := range FindWaLabel(Text) {
+									Text = strings.Replace(Text, WaLabel, `{\k1\-0}`, -1)
+								}
+							}
+
+							// 检查文本开头是否为`{\k1\-0}`，如果不是则添加
+							if !strings.HasPrefix(Text, `{\k1\-0}`) {
+								Text = `{\k1\-0}` + Text
 							}
 						}
 					}
@@ -231,12 +251,36 @@ func FindRubyLabel(Content string) []string {
 }
 
 /**
- * @description: 提取提取标签参数
+ * @description: 提取文本中的wa标签
+ * @param {string} Content 文本内容
+ * @return {[]string} 标签列表
+ */
+func FindWaLabel(Content string) []string {
+	Regexp := regexp.MustCompile(`\[wa:[^\]]*\]`)
+	Finds := Regexp.FindAllString(Content, -1)
+
+	return Finds
+}
+
+/**
+ * @description: 提取标签参数
  * @param {string} Content 文本内容
  * @return {string} 标签参数
  */
 func FindLabelParameter(Content string) string {
 	ContentSplit := strings.SplitN(Content, "=", -1)
+	Parameter := strings.Replace(ContentSplit[1], "]", "", -1)
+
+	return Parameter
+}
+
+/**
+ * @description: 提取冒号标签参数
+ * @param {string} Content 文本内容
+ * @return {string} 标签参数
+ */
+func FindColonLabelParameter(Content string) string {
+	ContentSplit := strings.SplitN(Content, ":", -1)
 	Parameter := strings.Replace(ContentSplit[1], "]", "", -1)
 
 	return Parameter
