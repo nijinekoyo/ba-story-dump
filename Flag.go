@@ -16,6 +16,7 @@ type Flag struct {
 	AddCharacterName      bool // 添加角色名字
 	AddFontSizeTips       bool // 添加字体大小提示
 	AddSpineIntervalStyle bool // 添加回忆大厅间隔样式
+	AddPlace              bool // 添加地点文本
 }
 
 var Flags Flag // 全局参数变量
@@ -31,6 +32,7 @@ func InitFlag() error {
 	AddCharacterName := flag.Bool("add_character_name", false, "添加角色名字")
 	AddFontSizeTips := flag.Bool("add_font_size_tips", false, "添加字体大小提示")
 	AddSpineIntervalStyle := flag.Bool("add_spine_interval_style", false, "添加回忆大厅间隔样式")
+	AddPlace := flag.Bool("add_place", false, "添加地点文本")
 	flag.Parse()
 
 	// 参数写入变量
@@ -39,6 +41,7 @@ func InitFlag() error {
 	Flags.AddCharacterName = *AddCharacterName
 	Flags.AddFontSizeTips = *AddFontSizeTips
 	Flags.AddSpineIntervalStyle = *AddSpineIntervalStyle
+	Flags.AddPlace = *AddPlace
 
 	return nil
 }

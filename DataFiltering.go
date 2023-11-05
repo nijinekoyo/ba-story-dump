@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-02-13 20:44:35
- * @LastEditTime: 2023-09-09 16:33:49
+ * @LastEditTime: 2023-11-05 14:25:36
  * @LastEditors: nijineko
  * @Description: 数据筛选
  * @FilePath: \StoryDump\DataFiltering.go
@@ -43,7 +43,23 @@ func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
 		case "#hidemenu": // 隐藏菜单
 		case "#wait": // 等待
 		case "#showmenu": // 显示菜单
-		case "#place": // 场景文本
+		case "#place": // 地点文本
+			if Flags.AddPlace {
+				// 将GroupId的最后一位数修正为0后判断是否存在
+				if _, Find := StorysDatas[Data.GroupId-(Data.GroupId%10)]; Find {
+					// 如果存在，则将文本追加到GroupId的最后一位数修正为0的对话文本中
+					StorysDatas[Data.GroupId-(Data.GroupId%10)] = StoryData{
+						Title:        StorysDatas[Data.GroupId-(Data.GroupId%10)].Title,
+						DialogueText: append(StorysDatas[Data.GroupId-(Data.GroupId%10)].DialogueText, FilterLabelData(Data.TextJp)),
+					}
+				} else {
+					// 如果不存在，则将文本追加到GroupId的对话文本中
+					StorysDatas[Data.GroupId] = StoryData{
+						Title:        StorysDatas[Data.GroupId].Title,
+						DialogueText: append(StorysDatas[Data.GroupId].DialogueText, FilterLabelData(Data.TextJp)),
+					}
+				}
+			}
 		case "#video": // 视频
 		default: // 判断为剧情文本
 			if Data.TextJp != "" {
