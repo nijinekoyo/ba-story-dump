@@ -24,10 +24,10 @@ type StoryData struct {
  * @param {OriginalFile} OriginalFile
  * @return {*}
  */
-func StoryDataFiltering(OriginalData OriginalFile) (map[int]StoryData, error) {
+func StoryDataFiltering(ScenarioScriptData []ScenarioScript) (map[int]StoryData, error) {
 	StorysDatas := make(map[int]StoryData)
 
-	for _, Data := range OriginalData.DataList {
+	for _, Data := range ScenarioScriptData {
 		ScriptData := strings.SplitN(Data.ScriptKr, ";", -1)
 		switch ScriptData[0] {
 		case "#title": // 剧情标题

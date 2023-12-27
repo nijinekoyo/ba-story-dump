@@ -1,0 +1,42 @@
+namespace flat;
+
+table ScenarioScriptExcel {
+    GroupId:long;
+    SelectionGroup:long;
+    BGMId:long;
+    Sound:string;
+    Transition:uint;
+    BGName:uint;
+    BGEffect:uint;
+    PopupFileName:string;
+    ScriptKr:string;
+    TextJp:string;
+    VoiceId:uint;
+}
+
+enum ProductionStep : int {
+	ToDo = 0,
+	Doing = 1,
+	Complete = 2,
+	Release = 3,
+}
+
+enum ScenarioCharacterShapes : int {
+	None = 0,
+    Signal = 1,
+    BlackSilhouette = 2,
+    Closeup = 4,
+    Highlight = 8,
+}
+
+table ScenarioCharacterNameExcel {
+    CharacterName:uint;
+    ProductionStep:ProductionStep;
+    NameKR:string;
+    NicknameKR:string;
+    NameJP:string;
+    NicknameJP:string;
+    Shape:ScenarioCharacterShapes;
+    SpinePrefabName:string;
+    SmallPortrait:string;
+}
