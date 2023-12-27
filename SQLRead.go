@@ -21,17 +21,17 @@ type ScenarioScriptDB struct {
 }
 
 type ScenarioScript struct {
-	GroupId        int    `json:"group_id"`
-	SelectionGroup int    `json:"selection_group"`
-	BGMId          int    `json:"bgm_id"`
-	Sound          string `json:"sound"`
-	Transition     uint   `json:"transition"`
-	BGName         uint   `json:"bg_name"`
-	BGEffect       uint   `json:"bg_effect"`
-	PopupFileName  string `json:"popup_file_name"`
-	ScriptKr       string `json:"script_kr"`
-	TextJp         string `json:"text_jp"`
-	VoiceId        uint   `json:"voice_id"`
+	GroupId        int
+	SelectionGroup int
+	BGMId          int
+	Sound          string
+	Transition     uint
+	BGName         uint
+	BGEffect       uint
+	PopupFileName  string
+	ScriptKr       string
+	TextJp         string
+	VoiceId        uint
 }
 
 type ScenarioCharacterNameDB struct {
@@ -40,15 +40,15 @@ type ScenarioCharacterNameDB struct {
 }
 
 type ScenarioCharacterName struct {
-	CharacterName   uint   `json:"character_name"`
-	ProductionSte   int    `json:"production_ste"`
-	NameKR          string `json:"name_kr"`
-	NicknameKR      string `json:"nickname_kr"`
-	NameJP          string `json:"name_jp"`
-	NicknameJP      string `json:"nickname_jp"`
-	Shape           int    `json:"shape"`
-	SpinePrefabName string `json:"spine_prefab_name"`
-	SmallPortrait   string `json:"small_portrait"`
+	CharacterName   uint
+	ProductionSte   int
+	NameKR          string
+	NicknameKR      string
+	NameJP          string
+	NicknameJP      string
+	Shape           int
+	SpinePrefabName string
+	SmallPortrait   string
 }
 
 const (

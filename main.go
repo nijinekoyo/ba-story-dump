@@ -25,6 +25,16 @@ func main() {
 		panic(err)
 	}
 
+	// 写入json文件
+	err = ScenarioScriptToJson(ScenarioScriptData)
+	if err != nil {
+		panic(err)
+	}
+	err = ScenarioCharacterNameToJson(ScenarioCharacterNameData)
+	if err != nil {
+		panic(err)
+	}
+
 	// 初始化角色信息本地化
 	InitCharacterInfoLocalization(ScenarioCharacterNameData)
 
