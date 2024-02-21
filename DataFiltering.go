@@ -178,15 +178,24 @@ func StoryDataFiltering(ScenarioScriptData []ScenarioScript) (map[int]StoryData,
 							Text += " (" + StyleTips + ")"
 						}
 
-						// 将GroupId的最后一位数修正为0后判断是否存在
-						if _, Find := StorysDatas[Data.GroupId-(Data.GroupId%10)]; Find {
-							// 如果存在，则将文本追加到GroupId的最后一位数修正为0的对话文本中
-							StorysDatas[Data.GroupId-(Data.GroupId%10)] = StoryData{
-								Title:        StorysDatas[Data.GroupId-(Data.GroupId%10)].Title,
-								DialogueText: append(StorysDatas[Data.GroupId-(Data.GroupId%10)].DialogueText, Text),
+						// 检查当前GroupId是否存在
+						if _, Find := StorysDatas[Data.GroupId]; !Find {
+							// 将GroupId的最后一位数修正为0后判断是否存在
+							if _, Find := StorysDatas[Data.GroupId-(Data.GroupId%10)]; Find {
+								// 如果存在，则将文本追加到GroupId的最后一位数修正为0的对话文本中
+								StorysDatas[Data.GroupId-(Data.GroupId%10)] = StoryData{
+									Title:        StorysDatas[Data.GroupId-(Data.GroupId%10)].Title,
+									DialogueText: append(StorysDatas[Data.GroupId-(Data.GroupId%10)].DialogueText, Text),
+								}
+							} else {
+								// 如果不存在，则将文本追加到GroupId的对话文本中
+								StorysDatas[Data.GroupId] = StoryData{
+									Title:        StorysDatas[Data.GroupId].Title,
+									DialogueText: append(StorysDatas[Data.GroupId].DialogueText, Text),
+								}
 							}
 						} else {
-							// 如果不存在，则将文本追加到GroupId的对话文本中
+							// 如果存在，则将文本追加到GroupId的对话文本中
 							StorysDatas[Data.GroupId] = StoryData{
 								Title:        StorysDatas[Data.GroupId].Title,
 								DialogueText: append(StorysDatas[Data.GroupId].DialogueText, Text),
