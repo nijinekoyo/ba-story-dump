@@ -1,7 +1,7 @@
 /*
  * @Author: nijineko
  * @Date: 2023-12-28 00:23:43
- * @LastEditTime: 2023-12-28 00:25:59
+ * @LastEditTime: 2024-02-21 18:31:01
  * @LastEditors: nijineko
  * @Description: 数据转换为json
  * @FilePath: \StoryDump\ToJson.go
@@ -14,7 +14,7 @@ import (
 )
 
 func ScenarioScriptToJson(ScenarioScriptData []ScenarioScript) error {
-	jsonBytes, err := json.Marshal(ScenarioScriptData)
+	jsonBytes, err := json.MarshalIndent(ScenarioScriptData, "", "    ")
 	if err != nil {
 		return err
 	}
@@ -23,7 +23,7 @@ func ScenarioScriptToJson(ScenarioScriptData []ScenarioScript) error {
 }
 
 func ScenarioCharacterNameToJson(ScenarioCharacterNameData []ScenarioCharacterName) error {
-	jsonBytes, err := json.Marshal(ScenarioCharacterNameData)
+	jsonBytes, err := json.MarshalIndent(ScenarioCharacterNameData, "", "    ")
 	if err != nil {
 		return err
 	}
